@@ -17,7 +17,7 @@ class UserResource extends Resource {
 
   FutureOr<Response> _getAllUsers(Injector injector) async {
     final database = injector.get<RemoteDatabase>();
-    final result = await database.query('SELECT * FROM "User";');
+    final result = await database.query('SELECT * FROM "User" ORDER BY ID;');
     final List users = result.map((e) => e['User']).toList();
     return Response.ok(jsonEncode(users));
   }
