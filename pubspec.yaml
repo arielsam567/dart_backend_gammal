@@ -9,6 +9,7 @@ dependencies:
   dio: ^5.0.3
   shelf: ^1.4.0
   shelf_modular: ^2.1.0
+  postgres: ^2.6.1
   
 dev_dependencies:
   lints: ^2.0.0
