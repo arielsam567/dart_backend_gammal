@@ -6,8 +6,10 @@ environment:
   sdk: '>=2.19.0 <3.0.0'
 
 dependencies:
+  dio: ^5.0.3
   shelf: ^1.4.0
-
+  shelf_modular: ^2.1.0
+  
 dev_dependencies:
   lints: ^2.0.0
   test: ^1.21.0
