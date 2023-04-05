@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:backend/src/core/services/bcrypt/bcrypt_service.dart';
 import 'package:backend/src/core/services/database/remove_database.dart';
 import 'package:shelf/shelf.dart';
 import 'package:shelf_modular/shelf_modular.dart';
@@ -47,8 +48,12 @@ class UserResource extends Resource {
   }
 
   FutureOr<Response> _addUser(ModularArguments arguments, Injector injector) async {
+    final bcrypt = injector.get<BcryptService>();
     final Map<String, dynamic> userParams = arguments.data as Map<String, dynamic>;
+    print('userParams: $userParams');
+    userParams['password'] = bcrypt.gerenateHash(userParams['password']);
     userParams.remove('id');
+
     final database = injector.get<RemoteDatabase>();
     final result = await database.query(
       'INSERT INTO "User" (email, password, name) VALUES ( @email, @password, @name ) RETURNING id, email, name, role',

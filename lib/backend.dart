@@ -23,7 +23,7 @@ Middleware jsonResponse() {
         response = response.change(
           headers: {
             'content-Type': 'application/json',
-            ...response.headers,
+            'Access-Control-Allow-Origin': '*', // Required for CORS support to work
           },
         );
       }

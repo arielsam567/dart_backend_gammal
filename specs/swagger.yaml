@@ -1,10 +1,10 @@
 openapi: 3.0.0
 info:
   description: "API system"
-  version: "1.0.0"
-  title: "BACKEND API"
+  version: "1.0.1"
+  title: "BACKEND API 2"
 servers:
-  - url: http://localhost:4466
+  - url: http://0.0.0.0:4466
     description: Remote server
 tags:
 - name: "user"
