@@ -1,27 +1,27 @@
 import 'dart:io';
 
 class DotEnvService {
-  DotEnvService._() {
-    _init();
+  final Map<String, String> _map = {};
+
+  DotEnvService({Map<String, String>? mocks}) {
+    if (mocks == null) {
+      _init();
+    } else {
+      _map.addAll(mocks);
+    }
   }
 
-  final Map<String, String> _env = {};
-
-  static DotEnvService instance = DotEnvService._();
-
-  void _init([String path = '.env']) {
-    final File file = File(path);
+  void _init() {
+    final file = File('.env');
     final envText = file.readAsStringSync();
 
-    for (final line in envText.split('\n')) {
-      final keyValue = line.split('=');
-      if (keyValue.length == 2) {
-        _env[keyValue[0]] = keyValue[1];
-      }
+    for (var line in envText.split('\n')) {
+      final lineBreak = line.split('=');
+      _map[lineBreak[0]] = lineBreak[1].trim();
     }
   }
 
   String? get(String key) {
-    return _env[key];
+    return _map[key];
   }
 }

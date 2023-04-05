@@ -17,7 +17,6 @@ Middleware jsonResponse() {
   return (handler) {
     return (request) async {
       var response = await handler(request);
-      print(response.headers);
 
       if (response.headers['content-Type'] == null) {
         response = response.change(
