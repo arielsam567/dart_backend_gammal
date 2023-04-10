@@ -12,12 +12,10 @@ class AuthResource extends Resource {
   @override
   List<Route> get routes => [
         //login
-        Route.post('/auth/login', _login),
+        Route.get('/auth/login', _login),
       ];
 
   FutureOr<Response> _login(Request request, Injector injector) async {
-    print('INICIO');
-
     final extractor = injector.get<RequestExtractor>();
     final bcrypt = injector.get<BcryptService>();
     final database = injector.get<RemoteDatabase>();
@@ -25,7 +23,6 @@ class AuthResource extends Resource {
 
     final credential = extractor.getAuthBasicToken(request);
     final email = credential.email;
-    print('email: $email');
 
     //TENTA PEGAR NA BASE DE DADOS O USUARIO COM O EMAIL PASSADO
     final result = await database.query(
@@ -33,15 +30,12 @@ class AuthResource extends Resource {
       variables: {'email': email},
     );
 
-    print('222');
     //SE NAO EXISTIR USUARIO COM O EMAIL PASSADO
     if (result.isEmpty) {
       return Response.forbidden(jsonEncode('Email or password is incorrect'));
     }
-    print('333');
     final user = result.map((e) => e['User']).first;
 
-    print('444');
     //SE A SENHA PASSADA NAO FOR IGUAL A SENHA DO USUARIO
     if (!bcrypt.checkHash(credential.password, user!['password'])) {
       return Response.forbidden(jsonEncode('Password is incorrect'));

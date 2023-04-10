@@ -7,14 +7,15 @@ servers:
   - url: http://0.0.0.0:4466
     description: Remote server
 tags:
-- name: "user"
-  description: "Access to User"
 - name: "auth"
   description: "Access to Auth"
+- name: "user"
+  description: "Access to User"
+
 
 paths:
   /auth/login:
-    post:
+    get:
       tags:
         - "auth"
       summary: "Login user"
