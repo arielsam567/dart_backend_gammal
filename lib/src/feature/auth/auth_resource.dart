@@ -5,14 +5,16 @@ import 'package:backend/src/core/services/bcrypt/bcrypt_service.dart';
 import 'package:backend/src/core/services/database/remove_database.dart';
 import 'package:backend/src/core/services/jwt/jwt_service.dart';
 import 'package:backend/src/core/services/request_extractor/request_extractor.dart';
+import 'package:backend/src/feature/auth/guard/auth_guard.dart';
 import 'package:shelf/shelf.dart';
 import 'package:shelf_modular/shelf_modular.dart';
 
 class AuthResource extends Resource {
   @override
   List<Route> get routes => [
-        //login
         Route.get('/auth/login', _login),
+        //checkToken
+        Route.get('/auth/check_token', _chechToken, middlewares: [AuthGuard()])
       ];
 
   FutureOr<Response> _login(Request request, Injector injector) async {
@@ -43,10 +45,10 @@ class AuthResource extends Resource {
 
     //SE A SENHA PASSADA FOR IGUAL A SENHA DO USUARIO
     final payload = user..remove('password');
-    payload['exp'] = _expirationTime(1);
+    payload['exp'] = _expirationTime(Duration(hours: 1));
     final token = jwt.generateToken(payload, 'accessToken');
 
-    payload['exp'] = _expirationTime(24 * 3);
+    payload['exp'] = _expirationTime(Duration(days: 1));
     final refreshToken = jwt.generateToken(payload, 'refreshToken');
 
     return Response.ok(
@@ -59,8 +61,13 @@ class AuthResource extends Resource {
     );
   }
 
-  int _expirationTime(int horas) {
-    final now = DateTime.now().add(Duration(hours: horas));
-    return now.millisecondsSinceEpoch * 1000;
+  FutureOr<Response> _chechToken(Request request, Injector injector) {
+    return Response.ok(jsonEncode('OK'));
+  }
+
+  int _expirationTime(Duration duration) {
+    final expiresDate = DateTime.now().add(duration);
+    final expiresIn = Duration(milliseconds: expiresDate.millisecondsSinceEpoch);
+    return expiresIn.inSeconds;
   }
 }

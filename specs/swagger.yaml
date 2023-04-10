@@ -34,12 +34,37 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/BadRequest'
+  /auth/check_token:
+    get:
+      tags:
+        - "auth"
+      summary: "Check token user"
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: "successful operation"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        400:
+          description: "Invalid status value"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'  
     
   /user/{id}:
     delete:
       tags:
         - "user"
       summary: "Delete user by id"
+      security:
+        - bearerAuth: []
       parameters:
         - name: "id"
           in: "path"
@@ -60,6 +85,8 @@ paths:
       tags:
         - "user"
       summary: "Get user by id"
+      security:
+        - bearerAuth: []
       parameters:
         - name: "id"
           in: "path"
@@ -86,6 +113,8 @@ paths:
       tags:
         - "user"
       summary: "Get all users"
+      security:
+        - bearerAuth: []
       responses:
         200:
           description: "successful operation"
@@ -127,6 +156,8 @@ paths:
       tags:
         - "user"
       summary: "Update user"
+      security:
+        - bearerAuth: []
       requestBody:
         content:
           application/json:
@@ -154,6 +185,11 @@ components:
     basicAuth:
       type: http
       scheme: basic
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: "JWT Authorization header using the Bearer scheme."
   schemas:
     Tokenization:
       type: object
