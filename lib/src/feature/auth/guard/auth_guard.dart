@@ -9,32 +9,31 @@ class AuthGuard extends ModularMiddleware {
   final List<String> roles;
   final bool isRefreshToken;
 
-  AuthGuard({
-    this.roles = const [],
-    this.isRefreshToken = false,
-  });
+  AuthGuard({this.roles = const [], this.isRefreshToken = false});
 
   @override
   Handler call(Handler handler, [ModularRoute? route]) {
-    final extractor = Modular.get<RequestExtractor>();
+    final extrator = Modular.get<RequestExtractor>();
     final jwt = Modular.get<JwtService>();
 
     return (request) {
       if (!request.headers.containsKey('authorization')) {
-        return Response.forbidden(jsonEncode({'message': 'Token not found'}));
+        return Response.forbidden(jsonEncode({'error': 'not authorization header'}));
       }
-      final token = extractor.getAuthBearerToken(request);
+
+      final token = extrator.getAuthBearerToken(request);
       try {
         jwt.verifyToken(token, isRefreshToken ? 'refreshToken' : 'accessToken');
         final payload = jwt.getPayload(token);
+        final role = payload['role'] ?? 'user';
 
-        if (roles.isNotEmpty && !roles.contains(payload['role'])) {
-          return Response.forbidden(jsonEncode({'message': 'User not authorized'}));
+        if (roles.isEmpty || roles.contains(role)) {
+          return handler(request);
         }
 
-        return handler(request);
+        return Response.forbidden(jsonEncode({'error': 'role ($role) not allowed'}));
       } catch (e) {
-        return Response.forbidden(jsonEncode({'message': 'Token is invalid | $e'}));
+        return Response.forbidden(jsonEncode({'error': e.toString()}));
       }
     };
   }

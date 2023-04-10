@@ -9,7 +9,7 @@ class BCryptServiceImp implements BcryptService {
   }
 
   @override
-  String gerenateHash(String text) {
+  String generateHash(String text) {
     final String hashed = BCrypt.hashpw(text, BCrypt.gensalt());
     return hashed;
   }

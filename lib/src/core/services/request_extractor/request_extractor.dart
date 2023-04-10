@@ -10,22 +10,22 @@ class RequestExtractor {
     return token;
   }
 
-  LoginCredetial getAuthBasicToken(Request request) {
+  LoginCredential getAuthBasicToken(Request request) {
     var token = request.headers['authorization'] ?? '';
     print('token: $token');
     token = token.split(' ').last;
     token = String.fromCharCodes(base64Decode(token));
     var credentials = token.split(':');
-    return LoginCredetial(
+    return LoginCredential(
       email: credentials[0],
       password: credentials[1],
     );
   }
 }
 
-class LoginCredetial {
+class LoginCredential {
   final String email;
   final String password;
 
-  LoginCredetial({required this.email, required this.password});
+  LoginCredential({required this.email, required this.password});
 }

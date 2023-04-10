@@ -25,7 +25,7 @@ void main() {
       Uri.parse('http://localhost:4466/'),
       headers: {'authorization': 'basic $base64'},
     );
-    final LoginCredetial credetial = extractior.getAuthBasicToken(request);
+    final LoginCredential credetial = extractior.getAuthBasicToken(request);
     expect(credetial.email, 'ariel@sam.com');
     expect(credetial.password, '123');
   });

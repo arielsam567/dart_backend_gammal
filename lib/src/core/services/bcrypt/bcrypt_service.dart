@@ -1,4 +1,4 @@
 abstract class BcryptService {
-  String gerenateHash(String text);
+  String generateHash(String text);
   bool checkHash(String text, String hash);
 }
