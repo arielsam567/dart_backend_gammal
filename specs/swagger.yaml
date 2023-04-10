@@ -58,6 +58,27 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/BadRequest'  
+  /auth/refresh_token:
+    get:
+      tags:
+        - "auth"
+      summary: "Refresh token user"
+      security:
+        - bearerRefreshAuth: []
+      responses:
+        200:
+          description: "successful operation"
+          content:
+            application/json:
+              schema:
+                 $ref: '#/components/schemas/Tokenization'
+            
+        400:
+          description: "Invalid status value"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'   
     
   /user/{id}:
     delete:
@@ -191,6 +212,10 @@ components:
       scheme: bearer
       bearerFormat: JWT
       description: "JWT Authorization header using the Bearer scheme."
+    bearerRefreshAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
   schemas:
     Tokenization:
       type: object

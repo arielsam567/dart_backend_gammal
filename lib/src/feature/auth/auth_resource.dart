@@ -13,7 +13,11 @@ class AuthResource extends Resource {
   @override
   List<Route> get routes => [
         Route.get('/auth/login', _login),
-        //checkToken
+        Route.get(
+          '/auth/refresh_token',
+          _refreshToken,
+          middlewares: [AuthGuard(isRefreshToken: true)],
+        ),
         Route.get('/auth/check_token', _chechToken, middlewares: [AuthGuard()])
       ];
 
@@ -36,33 +40,52 @@ class AuthResource extends Resource {
     if (result.isEmpty) {
       return Response.forbidden(jsonEncode('Email or password is incorrect'));
     }
-    final user = result.map((e) => e['User']).first;
+    final Map? user = result.map((e) => e['User']).first;
 
     //SE A SENHA PASSADA NAO FOR IGUAL A SENHA DO USUARIO
     if (!bcrypt.checkHash(credential.password, user!['password'])) {
       return Response.forbidden(jsonEncode('Password is incorrect'));
     }
-
-    //SE A SENHA PASSADA FOR IGUAL A SENHA DO USUARIO
     final payload = user..remove('password');
+
+    return Response.ok(generateToken(payload, jwt));
+  }
+
+  FutureOr<Response> _chechToken(Request request, Injector injector) {
+    return Response.ok(jsonEncode('OK'));
+  }
+
+  FutureOr<Response> _refreshToken(Request request, Injector injector) async {
+    final extractor = injector.get<RequestExtractor>();
+    final jwt = injector.get<JwtService>();
+    final database = injector.get<RemoteDatabase>();
+
+    final String token = extractor.getAuthBearerToken(request);
+    Map payload = jwt.getPayload(token);
+    final String id = payload['id'].toString();
+
+    //TENTA PEGAR NA BASE DE DADOS O USUARIO COM O EMAIL PASSADO
+    final result = await database.query(
+      'SELECT role, id, password FROM "User" where id = @id;',
+      variables: {'id': id},
+    );
+
+    payload = result.map((e) => e['User']).first!..remove('password');
+
+    return Response.ok(jsonEncode(generateToken(payload, jwt)));
+  }
+
+  Map generateToken(Map payload, JwtService jwt) {
     payload['exp'] = _expirationTime(Duration(hours: 1));
     final token = jwt.generateToken(payload, 'accessToken');
 
     payload['exp'] = _expirationTime(Duration(days: 1));
     final refreshToken = jwt.generateToken(payload, 'refreshToken');
 
-    return Response.ok(
-      jsonEncode(
-        {
-          'token': token,
-          'refreshToken': refreshToken,
-        },
-      ),
-    );
-  }
-
-  FutureOr<Response> _chechToken(Request request, Injector injector) {
-    return Response.ok(jsonEncode('OK'));
+    return {
+      'token': token,
+      'refreshToken': refreshToken,
+    };
   }
 
   int _expirationTime(Duration duration) {
