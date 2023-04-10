@@ -13,14 +13,9 @@ class AuthResource extends Resource {
   List<Route> get routes => [
         //login
         Route.post('/auth/login', _login),
-        //register
-        //refresh token
-        //logout
-        //check token
-        //update password
       ];
 
-  Future<FutureOr<Response>> _login(Request request, Injector injector) async {
+  FutureOr<Response> _login(Request request, Injector injector) async {
     print('INICIO');
 
     final extractor = injector.get<RequestExtractor>();

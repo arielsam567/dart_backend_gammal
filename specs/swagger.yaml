@@ -20,28 +20,13 @@ paths:
       summary: "Login user"
       security:
         - basicAuth: []
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                email:
-                  type: string
-                password:
-                  type: string
       responses:
         200:
           description: "successful operation"
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  token:
-                    type: string
-                  refreshToken:
-                    type: string
+                $ref: '#/components/schemas/Tokenization'
         400:
           description: "Invalid status value"
           content:
@@ -169,6 +154,13 @@ components:
       type: http
       scheme: basic
   schemas:
+    Tokenization:
+      type: object
+      properties:
+        accessToken:
+          type: string
+        refreshToken:
+          type: string
     User:
       type: object
       properties:
