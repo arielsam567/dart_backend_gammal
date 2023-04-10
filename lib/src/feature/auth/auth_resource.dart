@@ -18,7 +18,18 @@ class AuthResource extends Resource {
           _refreshToken,
           middlewares: [AuthGuard(isRefreshToken: true)],
         ),
-        Route.get('/auth/check_token', _chechToken, middlewares: [AuthGuard()])
+        Route.get(
+          '/auth/check_token',
+          _chechToken,
+          middlewares: [AuthGuard()],
+        ),
+        Route.post(
+          '/auth/refresh_password',
+          _refreshPassword,
+          middlewares: [
+            AuthGuard(),
+          ],
+        ),
       ];
 
   FutureOr<Response> _login(Request request, Injector injector) async {
@@ -48,7 +59,7 @@ class AuthResource extends Resource {
     }
     final payload = user..remove('password');
 
-    return Response.ok(generateToken(payload, jwt));
+    return Response.ok(jsonEncode(generateToken(payload, jwt)));
   }
 
   FutureOr<Response> _chechToken(Request request, Injector injector) {
@@ -66,13 +77,55 @@ class AuthResource extends Resource {
 
     //TENTA PEGAR NA BASE DE DADOS O USUARIO COM O EMAIL PASSADO
     final result = await database.query(
-      'SELECT role, id, password FROM "User" where id = @id;',
+      'SELECT role, id, FROM "User" where id = @id;',
       variables: {'id': id},
     );
 
     payload = result.map((e) => e['User']).first!..remove('password');
 
     return Response.ok(jsonEncode(generateToken(payload, jwt)));
+  }
+
+  FutureOr<Response> _refreshPassword(
+    Request request,
+    Injector injector,
+    ModularArguments args,
+  ) async {
+    final extractor = injector.get<RequestExtractor>();
+    final jwt = injector.get<JwtService>();
+    final database = injector.get<RemoteDatabase>();
+    final bcrypt = injector.get<BcryptService>();
+    final Map data = args.data;
+
+    final String token = extractor.getAuthBearerToken(request);
+    Map payload = jwt.getPayload(token);
+    final String id = payload['id'].toString();
+
+    final result = await database.query(
+      'SELECT password FROM "User" where id = @id;',
+      variables: {'id': id},
+    );
+
+    final Map user = result.map((e) => e['User']).first!;
+    final String password = user['password'];
+    final String oldPassword = data['password'];
+
+    if (!bcrypt.checkHash(oldPassword, password)) {
+      return Response.forbidden(jsonEncode('Password is incorrect'));
+    }
+
+    final String newPassword = data['new_password'];
+    final String newPasswordHash = bcrypt.gerenateHash(newPassword);
+
+    await database.query(
+      'UPDATE "User" password SET password=@password where id = @id;',
+      variables: {
+        'password': newPasswordHash,
+        'id': id,
+      },
+    );
+
+    return Response.ok(jsonEncode('OK'));
   }
 
   Map generateToken(Map payload, JwtService jwt) {
