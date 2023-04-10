@@ -22,6 +22,6 @@ class DotEnvService {
   }
 
   String? get(String key) {
-    return _map[key];
+    return _map[key]?.trim();
   }
 }

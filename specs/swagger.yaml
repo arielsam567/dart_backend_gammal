@@ -9,8 +9,46 @@ servers:
 tags:
 - name: "user"
   description: "Access to User"
+- name: "auth"
+  description: "Access to Auth"
 
 paths:
+  /auth/login:
+    post:
+      tags:
+        - "auth"
+      summary: "Login user"
+      security:
+        - basicAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        200:
+          description: "successful operation"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                  refreshToken:
+                    type: string
+        400:
+          description: "Invalid status value"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+    
   /user/{id}:
     delete:
       tags:
@@ -126,6 +164,10 @@ paths:
 
 
 components:
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
   schemas:
     User:
       type: object

@@ -26,10 +26,7 @@ class UserResource extends Resource {
   FutureOr<Response> _getUserById(ModularArguments arguments, Injector injector) async {
     final id = arguments.params['id'];
     final database = injector.get<RemoteDatabase>();
-    final result = await database.query(
-      'SELECT * FROM "User" where id = @id;',
-      variables: {'id': id},
-    );
+    final result = await database.query('SELECT * FROM "User" where id = @id;', variables: {'id': id});
     final userMap = result.map((e) => e['User']).first;
     return Response.ok(jsonEncode(userMap));
   }
