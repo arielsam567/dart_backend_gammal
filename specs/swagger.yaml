@@ -1,299 +1,54 @@
 openapi: 3.0.0
 info:
-  description: "API system"
-  version: "1.0.1"
-  title: "BACKEND API 2"
+  description: "API da semana do backend"
+  version: "1.0.0"
+  title: "Semana do Backend"
 servers:
-  - url: http://0.0.0.0:4466
+  - url: http://localhost:4466
+    description: Local server
+  - url: http://146.190.226.218:4466
     description: Remote server
 tags:
 - name: "auth"
-  description: "Access to Auth"
+  description: "Access to auth"
 - name: "user"
   description: "Access to User"
 
-
 paths:
+  # auth
   /auth/login:
-    get:
-      tags:
-        - "auth"
-      summary: "Login user"
-      security:
-        - basicAuth: []
-      responses:
-        200:
-          description: "successful operation"
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Tokenization'
-        400:
-          description: "Invalid status value"
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BadRequest'
-  
+    $ref: 'src/auth.yaml#/components/Login'
   /auth/check_token:
-    get:
-      tags:
-        - "auth"
-      summary: "Check token user"
-      security:
-        - bearerAuth: []
-      responses:
-        200:
-          description: "successful operation"
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-        400:
-          description: "Invalid status value"
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BadRequest'  
-  
+    $ref: 'src/auth.yaml#/components/CheckToken'
   /auth/refresh_token:
-    get:
-      tags:
-        - "auth"
-      summary: "Refresh token user"
-      security:
-        - bearerRefreshAuth: []
-      responses:
-        200:
-          description: "successful operation"
-          content:
-            application/json:
-              schema:
-                 $ref: '#/components/schemas/Tokenization'
-            
-        400:
-          description: "Invalid status value"
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BadRequest'   
-    
+    $ref: 'src/auth.yaml#/components/RefreshToken'
+  /auth/update_password:
+    $ref: 'src/auth.yaml#/components/UpdatePassword'
 
-  /auth/refresh_password:
-    get:
-      tags:
-        - "auth"
-      summary: "Refresh password user"
-      security:
-        - bearerAuth: []
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                password:
-                  type: string
-                new_password:
-                  type: string
-              
-      responses:
-        200:
-          description: "successful operation"
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-            
-        400:
-          description: "Invalid status value"
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BadRequest'   
-    
-
+  # user
   /user/{id}:
-    delete:
-      tags:
-        - "user"
-      summary: "Delete user by id"
-      security:
-        - bearerAuth: []
-      parameters:
-        - name: "id"
-          in: "path"
-          description: "ID of user to delete"
-          required: true
-          schema:
-            type: integer
-      responses:
-        200:
-          description: "successful operation"
-        400:
-          description: "Invalid status value"
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BadRequest'
-    get:
-      tags:
-        - "user"
-      summary: "Get user by id"
-      security:
-        - bearerAuth: []
-      parameters:
-        - name: "id"
-          in: "path"
-          description: "ID of user to return"
-          required: true
-          schema:
-            type: integer
-      responses:
-        200:
-          description: "successful operation"
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-        400:
-          description: "Invalid status value"
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BadRequest'
-
+    $ref: 'src/user.yaml#/components/GetOneOrDelete'
   /user:
-    get:
-      tags:
-        - "user"
-      summary: "Get all users"
-      security:
-        - bearerAuth: []
-      responses:
-        200:
-          description: "successful operation"
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/User'
-        400:
-          description: "Invalid status value"
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BadRequest'
-    post:
-      tags:
-        - "user"
-      summary: "Create new user"
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UserCreate'
-      responses:
-        201:
-          description: "successful operation"
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-        400:
-          description: "Invalid status value"
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BadRequest'
-    put:
-      tags:
-        - "user"
-      summary: "Update user"
-      security:
-        - bearerAuth: []
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/User'
-      responses:
-        200:
-          description: "successful operation"
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-        400:
-          description: "Invalid status value"
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BadRequest'
+    $ref: 'src/user.yaml#/components/UserCrud'
     
-
-
-
 components:
   securitySchemes:
-    basicAuth:
+    basicAuth:   
       type: http
       scheme: basic
     bearerAuth:
       type: http
       scheme: bearer
       bearerFormat: JWT
-      description: "JWT Authorization header using the Bearer scheme."
+      description: "Auth header (Authorization) Access Token"
     bearerRefreshAuth:
       type: http
       scheme: bearer
       bearerFormat: JWT
+      description: "RefreshToken"
   schemas:
-    Tokenization:
-      type: object
+    BackendException:
+      type: object 
       properties:
-        accessToken:
+        error: 
           type: string
-        refreshToken:
-          type: string
-    User:
-      type: object
-      properties:
-        id:
-          type: integer
-        name:
-          type: string
-        email:
-          type: string
-        role:
-          type: string
-          default: "user"
-          enum:
-            - "user"
-            - "admin"
-            - "menager"
-    UserCreate:
-      type: object
-      properties:
-        name:
-          type: string
-        email:
-          type: string
-        password:
-          type: string
-    BadRequest:
-      type: object
-      properties:
-        message:
-          type: string
-        code:
-          type: integer
-          default: 400
-        
