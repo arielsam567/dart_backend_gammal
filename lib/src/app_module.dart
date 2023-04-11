@@ -15,9 +15,6 @@ class AppModule extends Module {
   List<ModularRoute> get routes => [
         Route.get('/api/**', swaggerHandler),
         Route.resource(UserResource()),
-        Route.module(
-          '/auth',
-          module: AuthModule(),
-        ),
+        Route.module('/auth', module: AuthModule()),
       ];
 }

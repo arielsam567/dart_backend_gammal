@@ -16,7 +16,6 @@ class JwtServiceImp implements JwtService {
     final jwt = JWT(claims, audience: Audience.one(audience));
 
     final token = jwt.sign(SecretKey(key));
-    print('Signed token: $token\n');
     return token;
   }
 

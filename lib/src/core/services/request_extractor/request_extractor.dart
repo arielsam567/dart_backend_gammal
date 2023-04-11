@@ -4,7 +4,6 @@ import 'package:shelf/shelf.dart';
 
 class RequestExtractor {
   String getAuthBearerToken(Request request) {
-    print('headers: ${request.headers}');
     var token = request.headers['authorization'] ?? '';
     token = token.split(' ').last;
     return token;
@@ -12,7 +11,6 @@ class RequestExtractor {
 
   LoginCredential getAuthBasicToken(Request request) {
     var token = request.headers['authorization'] ?? '';
-    print('token: $token');
     token = token.split(' ').last;
     token = String.fromCharCodes(base64Decode(token));
     var credentials = token.split(':');

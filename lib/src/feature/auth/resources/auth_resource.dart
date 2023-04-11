@@ -27,7 +27,7 @@ class AuthResource extends Resource {
 
     try {
       final tokenization = await authRepository.login(credential);
-      return Response.ok(tokenization.toJson());
+      return Response.ok(jsonEncode(tokenization.toJson()));
     } on AuthException catch (e) {
       return Response(e.statusCode, body: e.toJson());
     }
@@ -39,7 +39,7 @@ class AuthResource extends Resource {
     final token = extractor.getAuthBearerToken(request);
 
     final tokenization = await authRepository.refreshToken(token);
-    return Response.ok(tokenization.toJson());
+    return Response.ok(jsonEncode(tokenization.toJson()));
   }
 
   FutureOr<Response> _checkToken() {
