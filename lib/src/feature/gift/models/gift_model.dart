@@ -1,9 +1,12 @@
+import 'package:backend/src/feature/user/models/user_model.dart';
+
 class GiftModel {
   final int id;
   final int userId;
   final String name;
   final String? description;
   final int? price;
+  final UserModel? user;
 
   GiftModel({
     required this.id,
@@ -11,6 +14,7 @@ class GiftModel {
     required this.name,
     this.description,
     this.price,
+    this.user,
   });
 
   factory GiftModel.fromMap(Map map) {
@@ -20,6 +24,7 @@ class GiftModel {
       userId: map['userId'],
       description: map['description'],
       price: map['price'],
+      user: map['user'] != null ? UserModel.fromMap(map['user']) : null,
     );
   }
 
@@ -30,6 +35,7 @@ class GiftModel {
       'userId': userId,
       'description': description,
       'price': price,
+      if (user != null) 'user': user!.toMap(),
     };
   }
 }

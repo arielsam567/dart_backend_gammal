@@ -38,17 +38,15 @@ class GiftRepository {
     if (json.isEmpty) {
       throw GiftException(403, 'gift not found');
     }
-    print('json: $json');
     return GiftModel.fromMap(json);
   }
 
   Future<GiftModel> getByIdWithDetails(String id) async {
-    final Map json = await datasource.getGiftById(id);
+    final Map json = await datasource.getGiftByIdWithUserDetails(id);
 
     if (json.isEmpty) {
       throw GiftException(403, 'gift not found');
     }
-    print('json: $json');
     return GiftModel.fromMap(json);
   }
 

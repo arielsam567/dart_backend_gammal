@@ -46,6 +46,32 @@ class GiftDatasource {
     }
   }
 
+  Future<Map<String, dynamic>> getGiftByIdWithUserDetails(String id) async {
+    try {
+      final List<Map<String, dynamic>> result = await database.query(
+        'SELECT * FROM "$table" JOIN "User" ON "$table"."userId" = "User"."id" WHERE "$table"."id" = @id;',
+        variables: {
+          'id': id,
+        },
+      );
+
+      if (result.isEmpty) {
+        return {};
+      }
+
+      final Map<String, dynamic> giftData = result[0]['Gift'];
+      final Map<String, dynamic> userData = result[0]['User'];
+      final Map<String, dynamic> combinedData = Map<String, dynamic>.from(giftData);
+      userData.remove('password');
+      combinedData['user'] = userData;
+
+      return combinedData;
+    } catch (e) {
+      print(e);
+      return {};
+    }
+  }
+
   Future<Map> getGiftByUserId(int userId) async {
     final List result = await database.query(
       'SELECT * FROM "$table" WHERE "userId" = @userId;',
