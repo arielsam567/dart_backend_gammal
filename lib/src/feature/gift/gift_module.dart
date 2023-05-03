@@ -9,7 +9,7 @@ class GiftModule extends Module {
   @override
   List<Bind<Object>> get binds => [
         Bind.singleton<AuthDatasource>((i) => AuthDatasourceImpl(i())),
-        Bind.singleton<GiftDatasourceImpl>((i) => GiftDatasourceImpl(i())),
+        Bind.singleton<GiftDatasource>((i) => GiftDatasource(i())),
         Bind.singleton((i) => AuthRepository(i(), i(), i())),
         Bind.singleton((i) => GiftRepository(i(), i(), i())),
       ];

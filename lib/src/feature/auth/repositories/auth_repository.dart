@@ -45,7 +45,7 @@ class AuthRepository {
   }
 
   Tokenization _generateToken(Map payload) {
-    payload['exp'] = _determineExpiration(Duration(minutes: 10));
+    payload['exp'] = _determineExpiration(Duration(days: 1));
 
     final accessToken = jwt.generateToken(payload, 'accessToken');
 

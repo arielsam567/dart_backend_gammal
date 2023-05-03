@@ -15,10 +15,14 @@ model User {
     password String
     name String
     role UserRole @default(USER)
+    gifts Gift[]
 }
 
 model Gift {
-    id Int @id @default(autoincrement())
-    userId Int 
-    name String
+    id      Int @id @default(autoincrement())
+    user    User @relation(fields: [userId], references: [id])
+    userId  Int 
+    name    String 
+    price   Int?
+    description String?
 }

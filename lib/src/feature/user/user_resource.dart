@@ -23,7 +23,6 @@ class UserResource extends Resource {
     final result = await database.query('SELECT id, name, email, role FROM "User";');
 
     final listUsers = result.map((e) => e['User']).toList();
-
     return Response.ok(jsonEncode(listUsers));
   }
 
