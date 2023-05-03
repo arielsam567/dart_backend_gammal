@@ -7,6 +7,7 @@ class GiftModel {
   final String? description;
   final int? price;
   final UserModel? user;
+  final String? image;
 
   GiftModel({
     required this.id,
@@ -15,6 +16,7 @@ class GiftModel {
     this.description,
     this.price,
     this.user,
+    this.image,
   });
 
   factory GiftModel.fromMap(Map map) {
@@ -24,6 +26,7 @@ class GiftModel {
       userId: map['userId'],
       description: map['description'],
       price: map['price'],
+      image: map['image'],
       user: map['user'] != null ? UserModel.fromMap(map['user']) : null,
     );
   }
@@ -35,6 +38,7 @@ class GiftModel {
       'userId': userId,
       'description': description,
       'price': price,
+      'image': image,
       if (user != null) 'user': user!.toMap(),
     };
   }

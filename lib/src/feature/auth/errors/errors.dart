@@ -8,7 +8,7 @@ class AuthException implements Exception {
   AuthException(this.statusCode, this.message, [this.stackTrace]);
 
   String toJson() {
-    return jsonEncode({'error': message});
+    return jsonEncode({'AuthException': message});
   }
 
   @override

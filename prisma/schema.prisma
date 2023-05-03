@@ -26,3 +26,5 @@ model Gift {
     price   Int?
     description String?
 }
+
+//command to update prisma 

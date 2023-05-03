@@ -1,6 +1,6 @@
 import 'package:backend/src/core/services/bcrypt/bcrypt_service.dart';
 import 'package:backend/src/core/services/jwt/jwt_service.dart';
-import 'package:backend/src/feature/gift/datasources/auth_datasource_imp.dart';
+import 'package:backend/src/feature/gift/datasources/gift_datasource.dart';
 import 'package:backend/src/feature/gift/errors/errors.dart';
 import 'package:backend/src/feature/gift/models/gift_model.dart';
 
@@ -11,7 +11,7 @@ class GiftRepository {
 
   GiftRepository(this.datasource, this.bcrypt, this.jwt);
 
-  Future<GiftModel> create({required String token, required Map map}) async {
+  Future<GiftModel> create({required String token, required Map<String, dynamic> map}) async {
     final Map payload = jwt.getPayload(token);
     final int userId = payload['id'];
     final Map json = await datasource.createGift(map: map, userId: userId);
@@ -26,7 +26,7 @@ class GiftRepository {
     final Map json = await datasource.getAllGifts(limit, offset);
 
     if (json.isEmpty) {
-      throw GiftException(403, 'I DONT KNOW WHAT TO DO');
+      return [];
     }
 
     return json.values.map((e) => GiftModel.fromMap(e['Gift'])).toList();

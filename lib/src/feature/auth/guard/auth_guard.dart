@@ -22,6 +22,9 @@ class AuthGuard extends ModularMiddleware {
       }
 
       final token = extrator.getAuthBearerToken(request);
+      if (token.isEmpty) {
+        return Response.forbidden(jsonEncode({'error': 'Token is empty'}));
+      }
       try {
         jwt.verifyToken(token, isRefreshToken ? 'refreshToken' : 'accessToken');
         final payload = jwt.getPayload(token);
@@ -33,7 +36,7 @@ class AuthGuard extends ModularMiddleware {
 
         return Response.forbidden(jsonEncode({'error': 'role ($role) not allowed'}));
       } catch (e) {
-        return Response.forbidden(jsonEncode({'error': e.toString()}));
+        return Response.forbidden(jsonEncode({'error AuthGuard': e.toString()}));
       }
     };
   }

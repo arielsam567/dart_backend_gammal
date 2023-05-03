@@ -8,7 +8,7 @@ class GiftException implements Exception {
   GiftException(this.statusCode, this.message, [this.stackTrace]);
 
   String toJson() {
-    return jsonEncode({'error': message});
+    return jsonEncode({'GiftException ': message});
   }
 
   @override

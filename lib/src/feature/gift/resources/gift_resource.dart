@@ -40,7 +40,7 @@ class GiftResource extends Resource {
   FutureOr<Response> _createGift(Injector injector, Request request, ModularArguments arguments) async {
     final extractor = injector.get<RequestExtractor>();
     final giftRepository = injector.get<GiftRepository>();
-    final data = arguments.data as Map;
+    final Map<String, dynamic> data = arguments.data as Map<String, dynamic>;
 
     final token = extractor.getAuthBearerToken(request);
 

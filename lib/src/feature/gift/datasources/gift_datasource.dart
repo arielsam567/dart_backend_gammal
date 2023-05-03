@@ -6,13 +6,24 @@ class GiftDatasource {
 
   GiftDatasource(this.database);
 
-  Future<Map> createGift({required int userId, required Map map}) async {
+  Future<Map> createGift({required int userId, required Map<String, dynamic> map}) async {
+    final List<String> columns = map.keys.where((key) => key != 'id' || key != 'userId').toList();
+
+    String valuesFields = '';
+    for (int i = 0; i < columns.length; i++) {
+      valuesFields += '@${columns[i]}';
+      if (i != columns.length - 1) {
+        valuesFields += ', ';
+      }
+    }
+
+    map['userId'] = userId;
+
+    final String query = 'INSERT INTO "$table" ("userId", ${columns.join(',')}) VALUES ( @userId, $valuesFields ) RETURNING *;';
+
     final List result = await database.query(
-      'INSERT INTO "$table" (name, "userId") VALUES ( @name, @userId ) RETURNING id, name;',
-      variables: {
-        'name': map['name'],
-        'userId': userId,
-      },
+      query,
+      variables: map,
     );
 
     return result.map((element) => element[table]).first!;
